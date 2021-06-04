@@ -213,7 +213,26 @@ def Test():
     session = DBSession()
     Blocks = session.query(Block).all()
     for block in Blocks:
-        print(block.height)
+        cmd = "cat ~/.minemon/logs/* ~/.minemon/logs-collector/* 2>/dev/null | grep 'CalcPledgeRewardValue: height: %s,' | head -n 1" % (block.height)
+        res = subprocess.run(cmd, shell=True,stdout=subprocess.PIPE,universal_newlines=True)
+        searchObj = re.search(r'nTotalReward: (.*), nMoneySupply: (.*), Surplus: .* = (.*), Pledge: .* = (.*), Reward: .* = (.*)', res.stdout, re.M|re.I)
+        if searchObj:
+            #print(height,searchObj.group())
+            searchObj = {
+                "TotalReward":Decimal(searchObj.group(1)),
+                "MoneySupply":Decimal(searchObj.group(2)),
+                "Surplus":Decimal(searchObj.group(3)),
+                "Pledge":Decimal(searchObj.group(4)),
+                "Reward":Decimal(searchObj.group(5))
+            }
+            #assert TotalReward == searchObj["TotalReward"],(height,TotalReward,searchObj["TotalReward"])
+            #assert MoneySupply == searchObj["MoneySupply"],(height,MoneySupply,searchObj["MoneySupply"])
+            #assert Stake == searchObj["Reward"],(height,Stake,searchObj["Reward"])
+            #print("height:",height,"test OK.")
+            print(block.height)
+            print(searchObj)
+            #break
+
     session.close()
 
 if __name__ == '__main__':

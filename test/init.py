@@ -68,7 +68,7 @@ exit()
 #mintredeem = info.stdout.strip("\n")
 
 def Vote(miner_addr,pri):
-    cmd = "minemon-cli addnewtemplate mintpledge '{\"owner\": \"%s\", \"powmint\": \"%s\", \"rewardmode\":1}'" % (pri,miner_addr)
+    cmd = 'minemon-cli addnewtemplate mintpledge \'{"owner": "%s", "powmint": "%s", "rewardmode":1}\'' % (pri,miner_addr)
     info = subprocess.run(cmd, shell=True,stdout=subprocess.PIPE,universal_newlines=True)
     vote_addr1 = info.stdout.strip("\n")
     print(vote_addr1,"-->>",miner_addr)
