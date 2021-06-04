@@ -1,0 +1,5 @@
+_bbc_lib.cpython-36m-x86_64-linux-gnu.so
+__pycache__/
+privkey.json
+addr.json
+bbc_lib.py
