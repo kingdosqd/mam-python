@@ -18,6 +18,8 @@ from operator import add, itemgetter, attrgetter
 import re
 import subprocess
 
+from sqlalchemy.sql.functions import GenericFunction
+
 context = decimal.getcontext()
 context.rounding = decimal.ROUND_DOWN
 
@@ -37,6 +39,17 @@ class Tx(Base):
     txfee = Column(DECIMAL, nullable=False)
     pool_in = Column(VARCHAR(256), nullable=False)
     miner_in = Column(VARCHAR(256), nullable=False)
+
+class Block(Base):
+    __tablename__ = 'block'
+    id = Column(INTEGER, primary_key=True)
+    hash = Column(VARCHAR(256), nullable=False)
+    prev_hash = Column(VARCHAR(256), nullable=False)
+    time = Column(INTEGER)
+    height = Column(INTEGER)
+    reward_address = Column(VARCHAR(256), nullable=False)
+    reward_money = Column(DECIMAL, nullable=False)
+    bits = Column(INTEGER)
 
 def TestWork():
     DBSession = sessionmaker(bind=engine)
@@ -194,7 +207,38 @@ def TestAmount():
 
     session.close()
     print("TestAmount OK")
-        
+
+def Test():
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    Blocks = session.query(Block).all()
+    for block in Blocks:
+        print(block.height)
+    session.close()
+
 if __name__ == '__main__':
-    TestWork()
-    TestAmount()
+    #print(GetDiff(0x170d5f7b))
+    #print(2**256)
+    #115792089237316195423570985008687907853269984665640564039457584007913129639936
+    #bits = int("1d00ffff",16)
+    #bits_ = 0x1d00ffff
+    #assert bits == bits_
+    #a = 0x10000000000000000000000000000000000000000000000000000000000000000
+    #b = 0x8000000000000000000000000000000000000000000000000000000000000000
+    #print(a / b)
+    #print(hex(2**256))
+    #a = GetDiff(0x1b0404cb)
+    #print(a)
+    #bits = 0x1d123456
+    #print(bits >> 24)
+    #print(hex(bits >> 24))
+    #print(hex(bits & 0xffffff))
+    #bits = 0x1b0404cb
+    #a = 2**256
+    #d = 0xffff * 2**(8*(0x1d - 3))
+    #= 0x00000000000404CB000000000000000000000000000000000000000000000000
+    #print(bits)
+    #print(a/d)
+    #TestWork()
+    #TestAmount()
+    Test()

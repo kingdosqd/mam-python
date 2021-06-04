@@ -16,6 +16,13 @@ import bbc_lib
 url = config.url
 connection = pymysql.connect(host=config.host, port=config.port, user=config.user, password=config.password, db=config.db)
 
+def GetHashM(bits):
+    a = bits >> 24
+    b = bits & 0xffffff
+    c = b * 2 ** (8 * (a - 3))
+    btc = 2**256 / c
+    return btc / 1000000
+
 def ExecSql(sql):
     try:
         cursor = connection.cursor()
@@ -135,7 +142,7 @@ def Useful(block_hash):
         
         if GetBlock(block_hash) == None:
             sql = "insert into block(hash,prev_hash,time,height,reward_address,bits,reward_money) values(%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,[obj["hash"],obj["hashPrev"],obj["time"],obj["height"],obj["txmint"]["sendto"],obj["bits"],obj["txmint"]["amount"]])
+            cursor.execute(sql,[obj["hash"],obj["hashPrev"],obj["time"],obj["height"],obj["txmint"]["sendto"],GetHashM(int(obj["bits"],16)),obj["txmint"]["amount"]])
         else:
             sql = "update block set is_useful = 1 where `hash` = '%s'" % block_hash
             cursor.execute(sql)
