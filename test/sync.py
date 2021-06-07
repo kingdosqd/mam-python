@@ -71,4 +71,6 @@ def Run():
 
 if __name__ == '__main__':
     ExecSql("delete from tx;")
-    Run()
+    ExecSql("delete from block;")
+    ExecSql("update tx inner join block on `block`.`hash` = tx.block_hash  set tx.height = `block`.height;")
+    #Run()

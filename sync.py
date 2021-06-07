@@ -7,6 +7,7 @@ import time, datetime
 from decimal import Decimal
 import sys
 import os
+
 import config
 import logging
 import traceback
@@ -17,6 +18,8 @@ url = config.url
 connection = pymysql.connect(host=config.host, port=config.port, user=config.user, password=config.password, db=config.db)
 
 def GetHashM(bits):
+    if bits == 0:
+        return 0
     a = bits >> 24
     b = bits & 0xffffff
     c = b * 2 ** (8 * (a - 3))
@@ -142,7 +145,7 @@ def Useful(block_hash):
         
         if GetBlock(block_hash) == None:
             sql = "insert into block(hash,prev_hash,time,height,reward_address,bits,reward_money) values(%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,[obj["hash"],obj["hashPrev"],obj["time"],obj["height"],obj["txmint"]["sendto"],GetHashM(int(obj["bits"],16)),obj["txmint"]["amount"]])
+            cursor.execute(sql,[obj["hash"],obj["hashPrev"],obj["time"],obj["height"],obj["txmint"]["sendto"],GetHashM(obj["bits"]),obj["txmint"]["amount"]])
         else:
             sql = "update block set is_useful = 1 where `hash` = '%s'" % block_hash
             cursor.execute(sql)
